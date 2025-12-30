@@ -1,0 +1,248 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard - Agence de Voyage{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <h1>Dashboard Admin</h1>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-content">
+                <h3>Services</h3>
+                <p class="stat-number">{{ stats.total_services }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+                <h3>Réservations</h3>
+                <p class="stat-number">{{ stats.total_reservations }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <h3>Utilisateurs</h3>
+                <p class="stat-number">{{ stats.total_users }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Revenu Total</h3>
+                <p class="stat-number">{{ stats.total_revenue|number_format(2, ',', '.') }}€</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+                <h3>En Attente</h3>
+                <p class="stat-number">{{ stats.pending_reservations }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Section -->
+    <div class="management-section">
+        <h2>Gestion</h2>
+        <div class="action-buttons">
+            <a href="{{ path('admin_services_list') }}" class="btn btn-primary">Gérer Services</a>
+            <a href="{{ path('admin_reservations') }}" class="btn btn-primary">Gérer Réservations</a>
+            <a href="{{ path('admin_users') }}" class="btn btn-primary">Gérer Utilisateurs</a>
+        </div>
+    </div>
+
+    <!-- Recent Reservations -->
+    <div class="recent-section">
+        <h2>Réservations Récentes</h2>
+        {% if recent_reservations %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Utilisateur</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in recent_reservations %}
+                <tr>
+                    <td>#{{ reservation.id }}</td>
+                    <td>{{ reservation.user.fullName }}</td>
+                    <td>{{ reservation.service.title }}</td>
+                    <td>{{ reservation.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        <span class="status status-{{ reservation.status }}">
+                            {{ reservation.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Aucune réservation pour le moment.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .admin-container {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .admin-container h1 {
+        font-size: 32px;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        padding: 20px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+        font-size: 40px;
+    }
+
+    .stat-content h3 {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .stat-number {
+        margin: 5px 0 0 0;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .management-section {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+    .management-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .recent-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .recent-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table thead {
+        background: #f8f9fa;
+    }
+
+    .table th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .status-confirmed {
+        background: #28a745;
+        color: white;
+    }
+
+    .status-completed {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .status-cancelled {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+{% endblock %}

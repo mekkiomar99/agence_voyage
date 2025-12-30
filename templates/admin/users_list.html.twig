@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <h1>Gestion des Utilisateurs</h1>
+
+    {% if users %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Nom Complet</th>
+                <th>Rôles</th>
+                <th>Créé le</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>#{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.fullName }}</td>
+                <td>
+                    {% for role in user.roles %}
+                    <span class="badge badge-role">{{ role }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                <td>
+                    <form method="post" action="{{ path('admin_users_delete', {id: user.id}) }}" onsubmit="return confirm('Supprimer cet utilisateur ?');" style="display:inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user' ~ user.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Aucun utilisateur pour le moment.</p>
+    {% endif %}
+</div>
+
+<style>
+    .admin-container {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background: #f8f9fa;
+    }
+
+    .table th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    .badge-role {
+        background: #667eea;
+        color: white;
+    }
+</style>
+{% endblock %}

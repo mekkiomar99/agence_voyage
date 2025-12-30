@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la réservation{% endblock %}
+
+{% block body %}
+    <div style="margin-bottom: 2rem;">
+        <a href="{{ path('app_profile') }}" style="color: #0066cc; text-decoration: none;">← Retour à mon profil</a>
+    </div>
+
+    <div class="card">
+        <h1>Réservation #{{ reservation.id }}</h1>
+
+        <h2>Service</h2>
+        <p><strong>{{ reservation.service.title }}</strong></p>
+        <p>Prix unitaire : {{ reservation.service.price|number_format(2, ',', ' ') }} €</p>
+
+        <h2>Détails de la réservation</h2>
+        <p><strong>Quantité :</strong> {{ reservation.quantity }}</p>
+        {% if reservation.dateFrom %}
+            <p><strong>Date de départ :</strong> {{ reservation.dateFrom|date('d/m/Y') }}</p>
+        {% endif %}
+        {% if reservation.dateTo %}
+            <p><strong>Date de retour :</strong> {{ reservation.dateTo|date('d/m/Y') }}</p>
+        {% endif %}
+
+        <h2>Statut</h2>
+        {% if reservation.status == 'pending' %}
+            <p><span style="background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 4px;">En attente de confirmation</span></p>
+        {% elseif reservation.status == 'confirmed' %}
+            <p><span style="background: #d4edda; color: #155724; padding: 0.5rem 1rem; border-radius: 4px;">Confirmée</span></p>
+        {% else %}
+            <p><span style="background: #f8d7da; color: #721c24; padding: 0.5rem 1rem; border-radius: 4px;">Annulée</span></p>
+        {% endif %}
+
+        <h2>Paiement</h2>
+        {% if reservation.payment %}
+            <p><strong>Montant :</strong> {{ reservation.payment.amount|number_format(2, ',', ' ') }} €</p>
+            <p><strong>Statut du paiement :</strong> 
+                {% if reservation.payment.status == 'pending' %}
+                    <span style="background: #fff3cd; color: #856404; padding: 0.25rem 0.75rem; border-radius: 4px;">En attente</span>
+                {% elseif reservation.payment.status == 'paid' %}
+                    <span style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 4px;">Payée</span>
+                {% else %}
+                    <span style="background: #f8d7da; color: #721c24; padding: 0.25rem 0.75rem; border-radius: 4px;">Échouée</span>
+                {% endif %}
+            </p>
+        {% else %}
+            <p style="color: #666;">Aucun paiement associé.</p>
+        {% endif %}
+    </div>
+{% endblock %}

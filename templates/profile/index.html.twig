@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Agence de Voyage{% endblock %}
+
+{% block body %}
+    <h1>Mon Profil</h1>
+
+    <div class="card">
+        <h2>Informations personnelles</h2>
+        <p><strong>Nom :</strong> {{ user.fullName }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+        <p><strong>Rôles :</strong> 
+            {% for role in user.roles %}
+                <span style="background: #0066cc; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; margin-right: 0.5rem;">{{ role }}</span>
+            {% endfor %}
+        </p>
+        <p><strong>Membre depuis :</strong> {{ user.createdAt|date('d/m/Y à H:i') }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Mes réservations</h2>
+        {% if reservations|length > 0 %}
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f0f0f0; border-bottom: 2px solid #ddd;">
+                        <th style="padding: 1rem; text-align: left;">Service</th>
+                        <th style="padding: 1rem; text-align: left;">Quantité</th>
+                        <th style="padding: 1rem; text-align: left;">Date de départ</th>
+                        <th style="padding: 1rem; text-align: left;">Statut</th>
+                        <th style="padding: 1rem; text-align: left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 1rem;">{{ reservation.service.title }}</td>
+                            <td style="padding: 1rem;">{{ reservation.quantity }}</td>
+                            <td style="padding: 1rem;">
+                                {% if reservation.dateFrom %}
+                                    {{ reservation.dateFrom|date('d/m/Y') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1rem;">
+                                {% if reservation.status == 'pending' %}
+                                    <span style="background: #fff3cd; color: #856404; padding: 0.25rem 0.75rem; border-radius: 4px;">En attente</span>
+                                {% elseif reservation.status == 'confirmed' %}
+                                    <span style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 4px;">Confirmée</span>
+                                {% else %}
+                                    <span style="background: #f8d7da; color: #721c24; padding: 0.25rem 0.75rem; border-radius: 4px;">Annulée</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1rem;">
+                                <a href="{{ path('app_reservation_detail', {id: reservation.id}) }}" style="color: #0066cc; text-decoration: none; margin-right:8px;">Voir</a>
+                                {% if reservation.status == 'confirmed' and reservation.payment is empty %}
+                                    <a href="{{ path('app_reservation_payment', {id: reservation.id}) }}" style="background:#0b4f8c;color:#fff;padding:6px 10px;border-radius:5px;text-decoration:none;">Payer</a>
+                                {% elseif reservation.payment is not empty %}
+                                    {% if reservation.payment.status == 'pending' %}
+                                        <span style="background:#fff3cd;color:#856404;padding:6px 10px;border-radius:5px;">Paiement en attente</span>
+                                    {% elseif reservation.payment.status == 'paid' %}
+                                        <span style="background:#d4edda;color:#155724;padding:6px 10px;border-radius:5px;">Payé</span>
+                                    {% else %}
+                                        <span style="background:#f8d7da;color:#721c24;padding:6px 10px;border-radius:5px;">Paiement échoué</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: #999;">Vous n'avez pas encore de réservations. <a href="{{ path('app_home') }}">Explorez nos services</a>.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservations - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <h1>Gestion des Réservations</h1>
+
+    {% if reservations %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Utilisateur</th>
+                <th>Service</th>
+                <th>Quantité</th>
+                <th>Date de Création</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td>#{{ reservation.id }}</td>
+                <td>{{ reservation.user.fullName }}</td>
+                <td>{{ reservation.service.title }}</td>
+                <td>{{ reservation.quantity }}</td>
+                <td>{{ reservation.createdAt|date('d/m/Y H:i') }}</td>
+                <td>
+                    <form method="post" action="{{ path('admin_reservations_change_status', {id: reservation.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('change_reservation_status' ~ reservation.id) }}">
+                        <select name="status" onchange="this.form.submit()">
+                            {% set options = {'pending':'pending','confirmed':'confirmed','completed':'completed','cancelled':'cancelled'} %}
+                            {% for val,label in options %}
+                                <option value="{{ val }}" {% if reservation.status == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Aucune réservation pour le moment.</p>
+    {% endif %}
+</div>
+
+<style>
+    .admin-container {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background: #f8f9fa;
+    }
+
+    .table th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .status-confirmed {
+        background: #28a745;
+        color: white;
+    }
+
+    .status-completed {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .status-cancelled {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+{% endblock %}

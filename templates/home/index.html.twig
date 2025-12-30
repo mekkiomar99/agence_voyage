@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Agence de Voyage{% endblock %}
+
+{% block body %}
+    <h1>Découvrez nos services de voyage</h1>
+    <p>Réservez vos vacances de rêve parmi nos offres exclusives.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        {% for service in services %}
+            <div class="card">
+                <h2>{{ service.title }}</h2>
+                <p>{{ service.description|slice(0, 100) }}...</p>
+                <p style="font-size: 1.5rem; color: #0066cc; margin: 1rem 0;"><strong>{{ service.price|number_format(2, ',', ' ') }} €</strong></p>
+                {% if service.available %}
+                    <a href="{{ path('app_service_show', {id: service.id}) }}" style="display: inline-block; background: #0066cc; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; margin-top: 1rem;">
+                        Voir les détails
+                    </a>
+                {% else %}
+                    <p style="color: red; margin-top: 1rem;"><strong>Non disponible</strong></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if services|length == 0 %}
+        <p style="text-align: center; margin-top: 2rem; color: #999;">Aucun service disponible pour le moment.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Paiement</h1>
+
+    <div class="card">
+        <p><strong>Réservation #{{ payment.reservation.id }}</strong></p>
+        <p><strong>Montant à payer :</strong> {{ payment.amount|number_format(2, ',', ' ') }} €</p>
+        <p><strong>Statut :</strong> {{ payment.status }}</p>
+
+        {% if payment.status != 'paid' %}
+            <form method="post" action="{{ path('app_payment_pay', {id: payment.id}) }}">
+                <button type="submit" class="btn">Payer maintenant (simulate)</button>
+            </form>
+        {% else %}
+            <p style="color:green;font-weight:600">Paiement déjà effectué.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .container { max-width: 800px; margin: 2rem auto; }
+    .card { background: white; padding: 1.5rem; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .btn { background: #0b4f8c; color: white; padding: 10px 16px; border:none; border-radius:6px; cursor:pointer; }
+</style>
+{% endblock %}

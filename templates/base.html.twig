@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Agence de Voyage{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>✈️</text></svg>">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+            /* Header / Nav improved contrast */
+            header { background: #0b4f8c; color: white; padding: 1rem; }
+            header a { color: white; text-decoration: none; margin-right: 0.5rem; }
+            .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+            nav { margin: 1rem 0; }
+            /* Make nav links look like buttons with good contrast */
+            nav a {
+                display: inline-block;
+                margin-right: 0.5rem;
+                color: #0b4f8c; /* default for inline nav outside header */
+                text-decoration: none;
+                padding: 0.4rem 0.75rem;
+                border-radius: 6px;
+                font-weight: 600;
+            }
+            /* When nav is inside the header, use white buttons */
+            header nav a {
+                color: #0b4f8c;
+                background: rgba(255,255,255,0.95);
+                padding: 0.35rem 0.7rem;
+                border-radius: 6px;
+                margin-right: 0.5rem;
+            }
+            header nav a:hover { background: rgba(255,255,255,0.85); }
+            /* Logout button placed inside form uses this class */
+            .nav-logout-button {
+                background: rgba(255,255,255,0.95);
+                color: #0b4f8c;
+                padding: 0.35rem 0.7rem;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+            }
+            .nav-logout-button:hover { background: rgba(255,255,255,0.85); }
+            .alert { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+            .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+            .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+            form { background: white; padding: 2rem; border-radius: 4px; margin: 2rem 0; }
+            form div { margin: 1rem 0; }
+            label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+            input[type="text"], input[type="email"], input[type="password"], textarea, select { 
+                width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; 
+            }
+            button { background: #0066cc; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background: #0052a3; }
+            .card { background: white; padding: 1.5rem; border-radius: 4px; margin: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            footer { background: #333; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
+        </style>
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <h1>Agence de Voyage</h1>
+            <nav>
+                <a href="{{ path('app_home') }}">Accueil</a>
+                {% if app.user %}
+                    <a href="{{ path('app_profile') }}">Mon Profil</a>
+                    <form action="{{ path('app_logout') }}" method="post" style="display:inline; vertical-align: middle;">
+                        <button type="submit" class="nav-logout-button">Déconnexion ({{ app.user.email }})</button>
+                    </form>
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('admin') }}">Admin</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ path('app_login') }}">Connexion</a>
+                    <a href="{{ path('app_register') }}">Inscription</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        <div class="container">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+            {% block body %}{% endblock %}
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Agence de Voyage. Tous droits réservés.</p>
+        </footer>
+
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
