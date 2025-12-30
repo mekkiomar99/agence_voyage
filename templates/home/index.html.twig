@@ -8,7 +8,12 @@
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
         {% for service in services %}
-            <div class="card">
+            <div class="card service-card">
+                {% if service.imageFilename %}
+                    <div class="service-image-container">
+                        <img src="{{ vich_uploader_asset(service, 'imageFile') }}" alt="{{ service.title }}" class="service-image">
+                    </div>
+                {% endif %}
                 <h2>{{ service.title }}</h2>
                 <p>{{ service.description|slice(0, 100) }}...</p>
                 <p style="font-size: 1.5rem; color: #0066cc; margin: 1rem 0;"><strong>{{ service.price|number_format(2, ',', ' ') }} €</strong></p>
@@ -22,6 +27,33 @@
             </div>
         {% endfor %}
     </div>
+
+    <style>
+        .service-card {
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .service-image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+            background: #f0f0f0;
+        }
+
+        .service-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    </style>
 
     {% if services|length == 0 %}
         <p style="text-align: center; margin-top: 2rem; color: #999;">Aucun service disponible pour le moment.</p>

@@ -15,6 +15,7 @@
                 <th>Nom Complet</th>
                 <th>Rôles</th>
                 <th>Créé le</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,10 +31,19 @@
                 </td>
                 <td>{{ user.createdAt|date('d/m/Y') }}</td>
                 <td>
-                    <form method="post" action="{{ path('admin_users_delete', {id: user.id}) }}" onsubmit="return confirm('Supprimer cet utilisateur ?');" style="display:inline">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user' ~ user.id) }}">
-                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                    </form>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        {% if user.id != app.user.id %}
+                            <a href="{{ path('admin_users_edit', {id: user.id}) }}" class="btn btn-sm btn-primary">Modifier</a>
+                        {% else %}
+                            <span style="color: #999; font-size: 12px;">Vous</span>
+                        {% endif %}
+                        {% if user.id != app.user.id %}
+                            <form method="post" action="{{ path('admin_users_delete', {id: user.id}) }}" onsubmit="return confirm('Supprimer cet utilisateur ?');" style="display:inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_user' ~ user.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -92,6 +102,41 @@
     .badge-role {
         background: #667eea;
         color: white;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #5568d3;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
     }
 </style>
 {% endblock %}

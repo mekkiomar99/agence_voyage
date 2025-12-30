@@ -10,8 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ServiceFormType extends AbstractType
 {
@@ -36,17 +35,13 @@ class ServiceFormType extends AbstractType
                 'label' => 'Disponible',
                 'required' => false
             ])
-            ->add('imageFile', FileType::class, [
+            ->add('imageFile', VichImageType::class, [
                 'label' => 'Image (optionnel)',
-                'mapped' => true,
                 'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '5M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
-                    ])
-                ],
-                'attr' => ['class' => 'form-control']
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri' => true,
+                'asset_helper' => true,
             ]);
     }
 

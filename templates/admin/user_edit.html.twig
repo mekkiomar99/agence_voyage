@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les rôles - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-container">
+    <h1>Modifier les rôles de l'utilisateur</h1>
+
+    <div class="user-info">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Nom complet:</strong> {{ user.fullName }}</p>
+    </div>
+
+    {{ form_start(form) }}
+    
+    <div class="form-group">
+        {{ form_label(form.roles) }}
+        {{ form_widget(form.roles) }}
+        {{ form_errors(form.roles) }}
+        <small class="form-text">Sélectionnez les rôles à attribuer à cet utilisateur.</small>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ path('admin_users') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+<style>
+    .admin-container {
+        padding: 40px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .user-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .user-info p {
+        margin: 5px 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .form-group input[type="checkbox"] {
+        margin-right: 8px;
+        margin-bottom: 10px;
+    }
+
+    .form-group label:has(input[type="checkbox"]) {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #5568d3;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+</style>
+{% endblock %}
+
