@@ -33,9 +33,9 @@ class ReservationController extends AbstractController
         $reservation->setQuantity($quantity);
         // If the service is available, auto-confirm and proceed to payment
         if ($service->isAvailable()) {
-            $reservation->setStatus('confirmed');
-        } else {
             $reservation->setStatus('pending');
+        } else {
+            $reservation->setStatus('confirmed');
         }
 
         if ($dateFrom) {

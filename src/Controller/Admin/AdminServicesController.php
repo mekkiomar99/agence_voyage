@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Service;
 use App\Form\ServiceFormType;
+use App\Repository\ReservationRepository;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -56,11 +57,44 @@ class AdminServicesController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: '_delete', methods: ['POST'])]
-    public function delete(Service $service, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Service $service, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository): Response
     {
+        // CSRF token check
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_service_' . $service->getId(), $token)) {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('admin_services_list');
+        }
+
+        // Vérifier s'il y a des réservations associées à ce service
+        $reservations = $reservationRepository->findBy(['service' => $service]);
+        $nonCompletedReservations = array_filter($reservations, function($reservation) {
+            return $reservation->getStatus() !== 'completed';
+        });
+        
+        if (count($nonCompletedReservations) > 0) {
+            $this->addFlash('error', 'Impossible de supprimer ce service car il existe ' . count($nonCompletedReservations) . ' réservation(s) non complétée(s). Seules les réservations avec le statut "completed" permettent la suppression du service.');
+            return $this->redirectToRoute('admin_services_list');
+        }
+
+        // Supprimer les réservations "completed" avant de supprimer le service
+        $completedReservations = array_filter($reservations, function($reservation) {
+            return $reservation->getStatus() === 'completed';
+        });
+        
+        foreach ($completedReservations as $reservation) {
+            $entityManager->remove($reservation);
+        }
+        
+        // Supprimer le service
         $entityManager->remove($service);
         $entityManager->flush();
-        $this->addFlash('success', 'Service supprimé avec succès !');
+        
+        $message = 'Service supprimé avec succès !';
+        if (count($completedReservations) > 0) {
+            $message .= ' (' . count($completedReservations) . ' réservation(s) complétée(s) supprimée(s) automatiquement)';
+        }
+        $this->addFlash('success', $message);
         return $this->redirectToRoute('admin_services_list');
     }
 }

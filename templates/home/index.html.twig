@@ -3,59 +3,55 @@
 {% block title %}Accueil - Agence de Voyage{% endblock %}
 
 {% block body %}
-    <h1>Découvrez nos services de voyage</h1>
-    <p>Réservez vos vacances de rêve parmi nos offres exclusives.</p>
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <h1 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">
+            Découvrez nos services de voyage
+        </h1>
+        <p style="font-size: 1.125rem; color: var(--text-light); max-width: 600px; margin: 0 auto;">
+            Réservez vos vacances de rêve parmi nos offres exclusives. Des destinations extraordinaires vous attendent !
+        </p>
+    </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
         {% for service in services %}
-            <div class="card service-card">
+            <div class="card service-card fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
                 {% if service.imageFilename %}
                     <div class="service-image-container">
                         <img src="{{ vich_uploader_asset(service, 'imageFile') }}" alt="{{ service.title }}" class="service-image">
                     </div>
                 {% endif %}
-                <h2>{{ service.title }}</h2>
-                <p>{{ service.description|slice(0, 100) }}...</p>
-                <p style="font-size: 1.5rem; color: #0066cc; margin: 1rem 0;"><strong>{{ service.price|number_format(2, ',', ' ') }} €</strong></p>
-                {% if service.available %}
-                    <a href="{{ path('app_service_show', {id: service.id}) }}" style="display: inline-block; background: #0066cc; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; margin-top: 1rem;">
-                        Voir les détails
-                    </a>
-                {% else %}
-                    <p style="color: red; margin-top: 1rem;"><strong>Non disponible</strong></p>
-                {% endif %}
+                <div style="padding: 0.5rem 0;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-dark);">{{ service.title }}</h2>
+                    <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 1rem;">{{ service.description|slice(0, 120) }}{% if service.description|length > 120 %}...{% endif %}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0;">
+                        <p style="font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0;">
+                            {{ service.price|number_format(2, ',', ' ') }} €
+                        </p>
+                        {% if service.available %}
+                            <span class="badge badge-success">Disponible</span>
+                        {% else %}
+                            <span class="badge badge-danger">Indisponible</span>
+                        {% endif %}
+                    </div>
+                    {% if service.available %}
+                        <a href="{{ path('app_service_show', {id: service.id}) }}" class="btn btn-primary" style="width: 100%; text-align: center; position: relative; z-index: 1;">
+                            Voir les détails →
+                        </a>
+                    {% else %}
+                        <div style="padding: 0.75rem; background: #fee2e2; border-radius: 8px; text-align: center; color: #991b1b; font-weight: 600;">
+                            Service temporairement indisponible
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         {% endfor %}
     </div>
 
-    <style>
-        .service-card {
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .service-image-container {
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-            margin: -1.5rem -1.5rem 1rem -1.5rem;
-            background: #f0f0f0;
-        }
-
-        .service-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-    </style>
-
     {% if services|length == 0 %}
-        <p style="text-align: center; margin-top: 2rem; color: #999;">Aucun service disponible pour le moment.</p>
+        <div style="text-align: center; margin-top: 4rem; padding: 3rem; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">✈️</div>
+            <p style="font-size: 1.25rem; color: var(--text-light); margin: 0;">Aucun service disponible pour le moment.</p>
+            <p style="color: var(--text-light); margin-top: 0.5rem;">Revenez bientôt pour découvrir nos nouvelles offres !</p>
+        </div>
     {% endif %}
 {% endblock %}
